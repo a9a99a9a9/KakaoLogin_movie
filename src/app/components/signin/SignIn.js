@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 import toast, { Toaster } from 'react-hot-toast';
 
-const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {  // setUserEmail과 setUserName을 props로 받음
+const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -85,52 +85,50 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {  // setU
     }
   };
 
-  // 카카오톡 로그인
   const handleKakaoLogin = () => {
     if (!window.Kakao?.isInitialized()) {
-      window.Kakao.init('YOUR_KAKAO_JS_KEY'); // JavaScript 키 입력
+      window.Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // JavaScript 키 입력
     }
-
-    window.Kakao.Auth.login({
-      success: (authObj) => {
-        window.Kakao.API.request({
-          url: '/v2/user/me',
-          success: (res) => {
-            const { id, kakao_account } = res;
-            const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
-            const kakaoName = kakao_account.profile?.nickname || 'Unknown';
-            const kakaoProfileId = id;
-
-            // 로그인 성공 시 이메일, 이름, 프로필 ID를 localStorage에 저장
-            localStorage.setItem('email', kakaoEmail);
-            localStorage.setItem('name', kakaoName); // 이름 저장
-            localStorage.setItem('profileId', kakaoProfileId); // 프로필 ID 저장
-
-            // 사용자 상태 업데이트
-            setIsAuthenticated(true);
-            setUserEmail(kakaoEmail);
-            setUserName(kakaoName);
-
-            // 콘솔에 이름 외의 정보 출력
-            console.log('Kakao Profile ID:', kakaoProfileId);
-            console.log('Kakao Email:', kakaoEmail);
-            console.log('Kakao Name:', kakaoName);
-
-            toast.success('카카오 로그인 성공!');
-            navigate('/');
-          },
-          fail: (error) => {
-            console.error('카카오 사용자 정보 요청 실패:', error);
-            toast.error('카카오 로그인 중 오류가 발생했습니다.');
-          },
-        });
-      },
-      fail: (err) => {
-        console.error('카카오 로그인 실패:', err);
-        toast.error('카카오 로그인 실패');
-      },
+  
+    // 기존 세션 초기화
+    window.Kakao.Auth.logout(() => {
+      console.log('기존 세션 초기화 완료');
+  
+      // 새로운 로그인 시작
+      window.Kakao.Auth.login({
+        success: (authObj) => {
+          window.Kakao.API.request({
+            url: '/v2/user/me',
+            success: (res) => {
+              const { id, kakao_account } = res;
+              const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
+              const kakaoName = kakao_account.profile?.nickname || 'Unknown';
+              const kakaoProfileId = id;
+  
+              localStorage.setItem('email', kakaoEmail);
+              localStorage.setItem('name', kakaoName);
+              localStorage.setItem('profileId', kakaoProfileId);
+  
+              setIsAuthenticated(true);
+              setUserEmail(kakaoEmail);
+              setUserName(kakaoName);
+  
+              toast.success('카카오 로그인 성공!');
+              navigate('/');
+            },
+            fail: (error) => {
+              console.error('카카오 사용자 정보 요청 실패:', error);
+              toast.error('카카오 로그인 중 오류가 발생했습니다.');
+            },
+          });
+        },
+        fail: (err) => {
+          console.error('카카오 로그인 실패:', err);
+          toast.error('카카오 로그인 실패');
+        },
+      });
     });
-  };
+  };  
 
   const toggleCard = () => {
     setIsLoginVisible(!isLoginVisible);
@@ -227,14 +225,27 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {  // setU
                 <button type="submit" disabled={!email || !password || !isValidEmail(email)}>
                   Login
                 </button>
-                {/* 카카오 로그인 버튼 */}
+                {/* 카카오 로그인 이미지 버튼 */}
                 <button
                   type="button"
                   onClick={handleKakaoLogin}
                   className="kakao-login-button"
-                  style={{ marginTop: '10px', backgroundColor: '#FEE500', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}
+                  style={{
+                    marginTop: '10px',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    border: 'none',
+                  }}
                 >
-                  카카오톡으로 로그인
+                  <img
+                    src="/kakao-login-button.png"  // public 폴더에 위치한 이미지 사용
+                    alt="카카오 로그인 버튼"
+                    style={{
+                      width: '100%',  // 버튼 크기 조정
+                      height: 'auto',
+                    }}
+                  />
                 </button>
               </form>
               <a href="javascript:void(0)" className="account-check" onClick={toggleCard}>
