@@ -119,6 +119,9 @@
   color: white; /* 사용자 이메일 텍스트 색상 */
   font-weight: bold; /* 텍스트 굵기 */
   margin-right: 10px; /* 오른쪽 여백 */
+  writing-mode: horizontal-tb; /* 가로로 변경 */
+  display: inline-block; /* 인라인 블록으로 설정 */
+  text-align: left; /* 텍스트 정렬 */
 }
 
 /* 작은 화면일 때 스타일 */

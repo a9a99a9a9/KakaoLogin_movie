@@ -9,6 +9,8 @@ import Header from './app/layout/header/Header'; // Header 컴포넌트 경로
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState(null); // 사용자 이메일 상태 추가
+  const [userName, setUserName] = useState(null);   // 사용자 이름 상태 추가
 
   // 카카오 SDK 초기화
   useEffect(() => {
@@ -22,7 +24,10 @@ const App = () => {
     const checkAuth = () => {
       // localStorage에서 이메일을 가져와 인증 상태 관리
       const email = localStorage.getItem('email');
+      const name = localStorage.getItem('name');
       setIsAuthenticated(!!email); // 이메일이 존재하면 인증됨
+      setUserEmail(email); // 이메일 상태 설정
+      setUserName(name); // 이름 상태 설정
     };
 
     // 로컬 스토리지 변경 감지 및 인증 상태 초기화
@@ -37,7 +42,7 @@ const App = () => {
   return (
     <Router>
       {/* 로그인 상태일 때만 Header 렌더링 */}
-      {isAuthenticated && <Header setIsAuthenticated={setIsAuthenticated} />}
+      {isAuthenticated && <Header userEmail={userEmail} userName={userName} setIsAuthenticated={setIsAuthenticated} />}
       <Routes>
         {/* 보호된 경로 */}
         <Route
@@ -75,7 +80,7 @@ const App = () => {
         {/* 로그인 경로 */}
         <Route
           path="/signin"
-          element={<SignIn setIsAuthenticated={setIsAuthenticated} />}
+          element={<SignIn setIsAuthenticated={setIsAuthenticated} setUserEmail={setUserEmail} setUserName={setUserName} />}
         />
         {/* 기본 경로 처리 */}
         <Route

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTicketAlt, faBars, faTimes, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { toast, ToastContainer } from 'react-toastify'; // 추가: toast 및 ToastContainer 임포트
-import 'react-toastify/dist/ReactToastify.css'; // Toastify 스타일 임포트
+import { toast, ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 import './Header.css';
 
 const Header = ({ setIsAuthenticated }) => {
@@ -11,40 +11,43 @@ const Header = ({ setIsAuthenticated }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [userEmail, setUserEmail] = useState(null);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768); // 화면 크기 상태
+  const [userName, setUserName] = useState(null);  // 사용자 이름 상태 추가
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768); 
   const navigate = useNavigate();
 
   // 새로고침 후 로그인 상태를 복원하는 부분
   useEffect(() => {
-    const storedEmail = localStorage.getItem('email'); // localStorage에서 이메일 정보 확인
+    const storedEmail = localStorage.getItem('email'); 
+    const storedName = localStorage.getItem('name'); // 이름도 가져오기
     if (storedEmail) {
-      setUserEmail(storedEmail); // 이메일이 있으면 로그인 상태로 복원
+      setUserEmail(storedEmail);
+      setUserName(storedName); // 이름 상태 설정
       const storedWishlist = JSON.parse(localStorage.getItem(`wishlist_${storedEmail}`)) || [];
       setWishlistCount(storedWishlist.length);
-      setIsAuthenticated(true); // 인증 상태 설정
+      setIsAuthenticated(true);
     } else {
-      setUserEmail(null); // 로그인 상태가 아니면 null
-      setIsAuthenticated(false); // 인증 상태를 false로 설정
+      setUserEmail(null);
+      setUserName(null); // 로그인 상태가 아니면 null
+      setIsAuthenticated(false);
     }
   }, [setIsAuthenticated]);
 
   // 화면 크기 변경 시 상태 업데이트
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    const handleResize = () => setIsSmallScreen(window.innerWidth <= 768); // 화면 크기 변경 시 상태 업데이트
+    const handleResize = () => setIsSmallScreen(window.innerWidth <= 768); 
 
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize); // 화면 크기 변경 이벤트 추가
+    window.addEventListener('resize', handleResize); 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize); // 이벤트 제거
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  // 카카오 로그인 처리
   const handleKakaoLogin = () => {
     if (!window.Kakao?.isInitialized()) {
-      window.Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // 여기에 JavaScript 키를 입력하세요
+      window.Kakao.init('YOUR_KAKAO_JS_KEY'); 
     }
 
     window.Kakao.Auth.login({
@@ -54,41 +57,45 @@ const Header = ({ setIsAuthenticated }) => {
           success: (res) => {
             const { id, kakao_account } = res;
             const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
+            const kakaoName = kakao_account.profile?.nickname || 'Unknown';
+            const kakaoProfileId = id;
 
-            // 로그인 성공 시 이메일을 localStorage에 저장
             localStorage.setItem('email', kakaoEmail);
-            setUserEmail(kakaoEmail); // 사용자 이메일 상태 업데이트
+            localStorage.setItem('name', kakaoName); // 이름을 localStorage에 저장
+            localStorage.setItem('profileId', kakaoProfileId); 
+
+            setUserEmail(kakaoEmail); 
+            setUserName(kakaoName); // 로그인 후 이름 업데이트
+
             setIsAuthenticated(true);
-            toast.success('카카오 로그인 성공!'); // toast 알림 표시
+            toast.success('카카오 로그인 성공!');
             navigate('/');
           },
           fail: (error) => {
             console.error('카카오 사용자 정보 요청 실패:', error);
-            toast.error('카카오 로그인 중 오류가 발생했습니다.'); // toast 알림 표시
+            toast.error('카카오 로그인 중 오류가 발생했습니다.');
           },
         });
       },
       fail: (err) => {
         console.error('카카오 로그인 실패:', err);
-        toast.error('카카오 로그인 실패'); // toast 알림 표시
+        toast.error('카카오 로그인 실패');
       },
     });
   };
 
-  // 로그아웃 처리
   const handleLogout = () => {
-    // 카카오 로그아웃 처리
     window.Kakao.Auth.logout(() => {
-      // 로그아웃 후 로컬 스토리지에서 이메일 정보 삭제
       localStorage.removeItem('email');
+      localStorage.removeItem('name'); 
       setUserEmail(null);
+      setUserName(null); 
       setIsAuthenticated(false);
-      toast.success('로그아웃 성공!'); // toast 알림 표시
-      navigate('/signin'); // 로그인 페이지로 리다이렉트
+      toast.success('로그아웃 성공!');
+      navigate('/signin');
     });
   };
 
-  // 모바일 메뉴 토글
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -112,9 +119,11 @@ const Header = ({ setIsAuthenticated }) => {
           </nav>
         </div>
         <div className="header-right">
-          <span className="user-email">{userEmail}</span>
+          {/* 이메일이 있으면 이메일을, 이름이 있으면 이름을 표시 */}
+          <span className="user-email" style={userName ? { writingMode: 'horizontal-tb' } : {}}>
+            {userName || userEmail}
+          </span>
 
-          {/* 로그아웃 버튼과 아이콘을 화면 크기에 따라 표시 */}
           {!isSmallScreen ? (
             <button className="icon-button logout-button" onClick={handleLogout}>
               <FontAwesomeIcon icon={faSignOutAlt} /> 로그아웃
@@ -145,13 +154,13 @@ const Header = ({ setIsAuthenticated }) => {
         </nav>
       </div>
 
-      <ToastContainer /> {/* 알림 표시를 위한 ToastContainer 추가 */}
+      <ToastContainer /> 
     </div>
   ) : (
     <div className="header-login">
       <button onClick={handleKakaoLogin}>카카오톡으로 로그인</button>
     </div>
-  ); // 로그인하지 않은 경우 로그인 버튼 표시
+  ); 
 };
 
 export default Header;

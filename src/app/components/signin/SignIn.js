@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 import toast, { Toaster } from 'react-hot-toast';
 
-const SignIn = ({ setIsAuthenticated }) => {
+const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {  // setUserEmail과 setUserName을 props로 받음
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -88,7 +88,7 @@ const SignIn = ({ setIsAuthenticated }) => {
   // 카카오톡 로그인
   const handleKakaoLogin = () => {
     if (!window.Kakao?.isInitialized()) {
-      window.Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // 여기에 JavaScript 키를 입력하세요
+      window.Kakao.init('YOUR_KAKAO_JS_KEY'); // JavaScript 키 입력
     }
 
     window.Kakao.Auth.login({
@@ -98,10 +98,24 @@ const SignIn = ({ setIsAuthenticated }) => {
           success: (res) => {
             const { id, kakao_account } = res;
             const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
+            const kakaoName = kakao_account.profile?.nickname || 'Unknown';
+            const kakaoProfileId = id;
 
-            // 로그인 성공 시 이메일을 localStorage에 저장
+            // 로그인 성공 시 이메일, 이름, 프로필 ID를 localStorage에 저장
             localStorage.setItem('email', kakaoEmail);
+            localStorage.setItem('name', kakaoName); // 이름 저장
+            localStorage.setItem('profileId', kakaoProfileId); // 프로필 ID 저장
+
+            // 사용자 상태 업데이트
             setIsAuthenticated(true);
+            setUserEmail(kakaoEmail);
+            setUserName(kakaoName);
+
+            // 콘솔에 이름 외의 정보 출력
+            console.log('Kakao Profile ID:', kakaoProfileId);
+            console.log('Kakao Email:', kakaoEmail);
+            console.log('Kakao Name:', kakaoName);
+
             toast.success('카카오 로그인 성공!');
             navigate('/');
           },
