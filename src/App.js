@@ -10,6 +10,14 @@ import Header from './app/layout/header/Header'; // Header 컴포넌트 경로
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // 카카오 SDK 초기화
+  useEffect(() => {
+    if (!window.Kakao?.isInitialized()) {
+      window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY);
+      console.log('Kakao SDK Initialized');
+    }
+  }, []);
+
   useEffect(() => {
     const checkAuth = () => {
       const email = localStorage.getItem('email');
