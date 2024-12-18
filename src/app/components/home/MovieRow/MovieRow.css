@@ -1,0 +1,28 @@
+/* src/app/components/home/movieRow/MovieRow.css */
+.movie-row {
+  margin-bottom: 30px;
+}
+
+.movie-row__posters {
+  display: flex;
+  gap: 10px;
+  overflow-x: scroll;
+}
+
+.movie-row__poster {
+  width: 150px;
+  height: 225px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.movie-row__poster img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.movie-row__poster:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s;
+}

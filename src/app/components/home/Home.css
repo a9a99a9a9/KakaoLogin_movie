@@ -1,0 +1,166 @@
+/* 기본 스타일 */
+.home {
+  padding: 20px;
+  background-color: #111;
+  margin-top: 50px;
+}
+
+body {
+  background-color: #111; /* 헤더 아래로 내린 부분의 배경색을 검정색으로 설정 */
+}
+
+.movie-row {
+  margin-bottom: 30px;
+}
+
+.movie-row h2 {
+  color: white;
+  font-size: 20px; /* 원래 크기 유지 */
+  font-weight: bold;
+}
+
+/* 추천 영화 스타일 */
+.recommended-movies {
+  margin-bottom: 30px;
+  max-height: 250px; /* 추천 영화 영역의 최대 높이 설정 */
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  white-space: nowrap; /* 콘텐츠가 한 줄에 표시되도록 설정 */
+  padding: 10px;
+  border: 3px solid #ff4500; /* 테두리 색상 추가 */
+  border-radius: 10px; /* 둥근 테두리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 선택적 그림자 효과 */
+}
+
+.recommended-movies .movie-row-container {
+  display: flex;
+  gap: 10px; /* 추천 영화 간격 조정 */
+  scroll-behavior: smooth; /* 부드러운 스크롤 */
+  overflow-x: auto; /* 가로 스크롤 허용 */
+  white-space: nowrap; /* 한 줄로 표시되도록 설정 */
+}
+
+.recommended-movies .movie-poster {
+  width: 105px;
+  height: 157px;
+  flex: 0 0 auto; /* 고정 크기를 유지하며 스크롤 가능하도록 설정 */
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.recommended-movies .movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recommended-movies .movie-poster:hover {
+  transform: scale(1.1); /* 확대 효과 */
+}
+
+/* 스크롤바 스타일 */
+.recommended-movies::-webkit-scrollbar {
+  height: 8px; /* 가로 스크롤바 높이 */
+}
+
+.recommended-movies::-webkit-scrollbar-thumb {
+  background-color: black; /* 스크롤바 색상 */
+  border-radius: 10px;
+}
+
+.recommended-movies::-webkit-scrollbar-track {
+  background-color: #333; /* 스크롤 트랙 색상 */
+  border-radius: 10px;
+}
+
+.recommended-movies::-webkit-scrollbar-thumb:hover {
+  background-color: #ff4500; /* 스크롤바 색상 (hover 시) */
+}
+
+.movie-row-container {
+  display: flex;
+  overflow-x: auto;
+  overflow-y:hidden; /* 가로 스크롤 허용 */
+  scroll-behavior: smooth; /* 부드럽게 스크롤 */
+  gap: 10px;
+  padding: 10px 0; /* 위 아래 여백 추가 */
+  width: 100%;
+}
+
+.movie-poster {
+  width: 150px;
+  height: 225px;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.movie-poster:hover {
+  transform: scale(1.1);
+}
+
+/* 포스터에 마우스를 올렸을 때 확대 효과 */
+.movie-row__poster:hover {
+  transform: scale(1.1);
+}
+
+/* 스크롤바 스타일 */
+.movie-row-container::-webkit-scrollbar {
+  width: 8px; /* 스크롤바 너비 */
+  height: 8px; /* 수평 스크롤바 높이 */
+}
+
+.movie-row-container::-webkit-scrollbar-thumb {
+  background-color: black; /* 스크롤바 색상 */
+  border-radius: 10px;
+}
+
+.movie-row-container::-webkit-scrollbar-track {
+  background-color: #333; /* 스크롤 트랙 색상 */
+  border-radius: 10px;
+}
+
+.movie-row-container::-webkit-scrollbar-thumb:hover {
+  background-color: #ff4500; /* 스크롤바 색상 (hover 시) */
+}
+
+/* 반응형 스타일: 화면 크기에 따라 포스터 크기만 조정 */
+@media (max-width: 768px) {
+  .movie-poster {
+    width: 100px; /* 포스터 크기 줄임 */
+    height: 150px;
+  }
+  .movie-row-container {
+    gap: 6px; /* 간격 조정 */
+  }
+  .recommended-movies .movie-poster {
+    width: 84px; /* 추천 포스터 크기 줄임 */
+    height: 126px;
+  }
+  .recommended-movies {
+    max-height: 250px; /* 작은 화면에서 최대 높이 조정 */
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-poster {
+    width: 80px; /* 포스터 크기 더 줄임 */
+    height: 120px;
+  }
+  .movie-row-container {
+    gap: 4px; /* 간격 줄이기 */
+  }
+  .recommended-movies .movie-poster {
+    width: 70px; /* 추천 포스터 크기 더 줄임 */
+    height: 105px;
+  }
+  .recommended-movies {
+    max-height: 200px; /* 더 작은 화면에서 높이 조정 */
+  }
+}

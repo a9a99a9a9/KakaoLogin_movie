@@ -1,0 +1,108 @@
+.wishlist-container {
+  padding: 40px;
+  background-color: black; /* 조금 더 부드러운 회색으로 변경 */
+  border-radius: 10px; /* 둥근 모서리를 부드럽게 처리 */
+  margin-top: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과를 추가 */
+}
+
+.wishlist-movies {
+  display: flex;
+  flex-wrap: wrap; /* 영화 목록을 여러 줄로 표시 */
+  gap: 20px; /* 영화 아이템 사이의 간격 추가 */
+}
+
+.wishlist-movie {
+  background-color: gray; /* 하얀색 배경으로 영화 아이템 강조 */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 카드 형태로 그림자 추가 */
+  max-width: 200px; /* 영화 카드의 최대 너비 제한 */
+  transition: transform 0.3s ease; /* 마우스 호버 시 부드럽게 크기 변경 */
+}
+
+.wishlist-movie:hover {
+  transform: translateY(-5px); /* 마우스를 올리면 약간 위로 이동하는 효과 */
+}
+
+.wishlist-movie img {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 15px; /* 이미지 아래에 여백 추가 */
+}
+
+.wishlist-movie-info {
+  text-align: center;
+}
+
+.wishlist-movie-info h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px; /* 제목 아래 여백 추가 */
+  color: #333; /* 진한 회색으로 제목 색상 설정 */
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #e50914; /* 넷플릭스의 대표 색상으로 버튼 색상 변경 */
+  color: white;
+  cursor: pointer;
+  border-radius: 5px; /* 버튼도 약간 둥근 모서리로 변경 */
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* 호버 시 부드러운 색상 및 크기 변화 추가 */
+}
+
+button:hover {
+  background-color: #bf0411; /* 조금 더 진한 빨간색으로 변경 */
+  transform: scale(1.05); /* 마우스 올리면 약간 확대되는 효과 */
+}
+
+button:active {
+  transform: scale(0.95); /* 클릭 시 약간 축소되는 효과 */
+}
+
+.wishlist p {
+  text-align: center;
+  font-size: 18px;
+  color: #666; /* 비어있을 때 메시지 색상 설정 */
+  margin-top: 40px; /* 위쪽에 여유 공간 추가 */
+}
+
+@media (max-width: 768px) {
+  .wishlist-movies {
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 표시 */
+    gap: 10px; /* 카드 간 간격 */
+    justify-content: center; /* 카드 가운데 정렬 */
+  }
+
+  .wishlist-movie {
+    max-width: 45%; /* 한 줄에 두 개씩 배치 */
+    flex: 0 0 45%; /* 고정 너비 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    margin-bottom: 10px; /* 카드 간 아래 여백 */
+  }
+
+  .wishlist-movie img {
+    width: 100%; /* 카드 크기에 맞게 포스터 조정 */
+    height: auto; /* 비율 유지 */
+    border-radius: 8px; /* 둥근 모서리 */
+  }
+}
+
+@media (max-width: 480px) {
+  .wishlist-movies {
+    gap: 8px; /* 작은 화면에서 간격 줄이기 */
+  }
+
+  .wishlist-movie {
+    max-width: 48%; /* 더 작은 화면에서 두 개씩 배치 */
+    flex: 0 0 48%; /* 고정 너비 */
+  }
+
+  .wishlist-movie img {
+    width: 100%; /* 카드 크기에 맞게 포스터 조정 */
+    height: auto; /* 비율 유지 */
+  }
+}

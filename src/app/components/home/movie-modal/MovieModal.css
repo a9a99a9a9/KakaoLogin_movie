@@ -1,0 +1,98 @@
+/* src/app/components/movie-modal/MovieModal.css */
+.movie-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.movie-modal__content {
+  position: relative; /* 닫기 버튼을 모달 안에 위치시키기 위해 relative로 설정 */
+  background-color: #000; /* 검정색 배경 */
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.movie-modal__close {
+  position: absolute;
+  top: 15px; /* 모달 창 내부의 상단에 위치 */
+  right: 15px; /* 모달 창 내부의 우측에 위치 */
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2); /* 약간의 배경색을 추가해 시각적으로 구분 */
+  border-radius: 50%; /* 둥근 버튼 스타일 */
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-modal__close:hover {
+  background-color: rgba(255, 255, 255, 0.4); /* 호버 시 배경색 변경 */
+}
+
+.movie-modal__image img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 10px;
+}
+
+.movie-modal__details {
+  text-align: left;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-modal__details h2 {
+  margin-top: 10px;
+  font-size: 24px;
+}
+
+.movie-modal__details p {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.movie-modal__details button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.movie-modal__details button:hover {
+  background-color: #0056b3;
+}
+
+/* 작은 화면에서의 세로 레이아웃 */
+@media (max-width: 600px) {
+  .movie-modal__content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .movie-modal__details {
+    margin-left: 0;
+    margin-top: 20px;
+    text-align: center;
+  }
+}
