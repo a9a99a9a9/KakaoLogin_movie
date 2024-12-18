@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React App</title>
-    <!-- 카카오 SDK 추가 -->
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카카오 로그인 예제</title>
+  
+  <!-- 카카오 SDK 로드 -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  
+  <script>
+    // DOMContentLoaded 이벤트로 SDK가 로드된 후 초기화
+    document.addEventListener("DOMContentLoaded", function() {
+      Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // 실제 REST API 키로 변경
+      console.log(Kakao.isInitialized() ? "카카오 SDK 초기화 완료" : "카카오 SDK 초기화 실패");
+    });
+  </script>
+</head>
+<body>
+  <!-- React 앱을 렌더링할 요소 -->
+  <div id="root"></div> <!-- 반드시 있어야 함 -->
+  
+  <button id="kakao-login-btn">카카오 로그인</button>
+
+  <script>
+    // 카카오 로그인 버튼 클릭 시 이벤트 처리
+    document.getElementById('kakao-login-btn').addEventListener('click', function() {
+      Kakao.Auth.login({
+        success: function(authObj) {
+          console.log(authObj);
+          // 로그인 성공 시 액세스 토큰(authObj.access_token)을 사용하여 API 호출 가능
+        },
+        fail: function(err) {
+          console.log(err);
+        }
+      });
+    });
+  </script>
+</body>
 </html>

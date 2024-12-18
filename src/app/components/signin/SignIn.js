@@ -13,10 +13,10 @@ const SignIn = ({ setIsAuthenticated }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isTermsChecked, setIsTermsChecked] = useState(false);
-  const [isAuthLoaded, setIsAuthLoaded] = useState(false); // 인증 상태 로드 여부 추가
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
   const navigate = useNavigate();
 
-  const TMDB_API_KEY = '7bd1ba614e1eca467c9c659df3f40e8b'; // TMDB API Key
+  const TMDB_API_KEY = '7bd1ba614e1eca467c9c659df3f40e8b';
 
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
@@ -34,12 +34,10 @@ const SignIn = ({ setIsAuthenticated }) => {
         navigate('/');
       }
     } else {
-      // Remember me가 체크되지 않은 경우 로그아웃 처리
       localStorage.removeItem('email');
       setIsAuthenticated(false);
     }
 
-    // 인증 상태 로드 완료 설정
     setIsAuthLoaded(true);
   }, [setIsAuthenticated, navigate]);
 
@@ -85,6 +83,38 @@ const SignIn = ({ setIsAuthenticated }) => {
       setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
       toast.error('로그인 실패. 다시 시도해 주세요.');
     }
+  };
+
+  // 카카오톡 로그인
+  const handleKakaoLogin = () => {
+    if (!window.Kakao?.isInitialized()) {
+      window.Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // 여기에 JavaScript 키를 입력하세요
+    }
+
+    window.Kakao.Auth.login({
+      success: (authObj) => {
+        window.Kakao.API.request({
+          url: '/v2/user/me',
+          success: (res) => {
+            const { id, kakao_account } = res;
+            const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
+
+            localStorage.setItem('email', kakaoEmail);
+            setIsAuthenticated(true);
+            toast.success('카카오 로그인 성공!');
+            navigate('/');
+          },
+          fail: (error) => {
+            console.error('카카오 사용자 정보 요청 실패:', error);
+            toast.error('카카오 로그인 중 오류가 발생했습니다.');
+          },
+        });
+      },
+      fail: (err) => {
+        console.error('카카오 로그인 실패:', err);
+        toast.error('카카오 로그인 실패');
+      },
+    });
   };
 
   const toggleCard = () => {
@@ -138,7 +168,6 @@ const SignIn = ({ setIsAuthenticated }) => {
   };
 
   if (!isAuthLoaded) {
-    // 인증 상태 로드 중일 때 로딩 상태 표시
     return <div>Loading...</div>;
   }
 
@@ -149,7 +178,6 @@ const SignIn = ({ setIsAuthenticated }) => {
       <div className="container">
         <div id="phone">
           <div id="content-wrapper">
-            {/* 로그인 폼 */}
             <div className={`card ${isLoginVisible ? '' : 'hidden'}`} id="login">
               <form onSubmit={handleLogin}>
                 <h1>Sign in</h1>
@@ -184,13 +212,20 @@ const SignIn = ({ setIsAuthenticated }) => {
                 <button type="submit" disabled={!email || !password || !isValidEmail(email)}>
                   Login
                 </button>
+                {/* 카카오 로그인 버튼 */}
+                <button
+                  type="button"
+                  onClick={handleKakaoLogin}
+                  className="kakao-login-button"
+                  style={{ marginTop: '10px', backgroundColor: '#FEE500', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}
+                >
+                  카카오톡으로 로그인
+                </button>
               </form>
               <a href="javascript:void(0)" className="account-check" onClick={toggleCard}>
                 Don't have an account? <b>Sign up</b>
               </a>
             </div>
-
-            {/* 회원가입 폼 */}
             <div className={`card ${isLoginVisible ? 'hidden' : ''}`} id="register">
               <form onSubmit={handleRegister}>
                 <h1>Sign up</h1>
