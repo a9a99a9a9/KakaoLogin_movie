@@ -99,6 +99,7 @@ const SignIn = ({ setIsAuthenticated }) => {
             const { id, kakao_account } = res;
             const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
 
+            // 로그인 성공 시 이메일을 localStorage에 저장
             localStorage.setItem('email', kakaoEmail);
             setIsAuthenticated(true);
             toast.success('카카오 로그인 성공!');
