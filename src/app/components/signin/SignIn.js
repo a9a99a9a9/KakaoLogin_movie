@@ -207,13 +207,11 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                 <button type="submit" disabled={!email || !password || !isValidEmail(email)}>
                   Login
                 </button>
-                <button
-                  type="button"
-                  onClick={handleKakaoLogin}
-                  className="kakao-login-button"
-                >
-                  <img src="/kakao-login-button.png" alt="카카오 로그인 버튼" />
-                </button>
+                <img src="/kakao-login-button.png"
+                alt="카카오 로그인 버튼"
+                className="kakao-login-image"
+                onClick={handleKakaoLogin} // 클릭 시 handleKakaoLogin 실행
+                style={{ cursor: 'pointer', width: '100%', height: 'auto' }}/>
               </form>
               <a href="javascript:void(0)" onClick={toggleCard}>
                 Don't have an account? <b>Sign up</b>
