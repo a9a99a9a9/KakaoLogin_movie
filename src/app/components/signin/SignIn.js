@@ -16,44 +16,31 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
   const navigate = useNavigate();
 
-  const TMDB_API_KEY = '7bd1ba614e1eca467c9c659df3f40e8b';
-
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     const autoLogin = localStorage.getItem('autoLogin') === 'true';
+    const loginType = localStorage.getItem('loginType');
 
     if (rememberedEmail) {
       setEmail(rememberedEmail);
       setRememberMe(true);
     }
 
-    if (autoLogin) {
+    if (autoLogin && loginType) {
       const savedEmail = localStorage.getItem('email');
-      if (savedEmail) {
-        setIsAuthenticated(true);
-        navigate('/');
-      }
+      const savedName = localStorage.getItem('name');
+      setIsAuthenticated(true);
+      setUserEmail(savedEmail);
+      setUserName(savedName || 'User');
+      navigate('/');
     } else {
       localStorage.removeItem('email');
+      localStorage.removeItem('loginType');
       setIsAuthenticated(false);
     }
 
     setIsAuthLoaded(true);
-  }, [setIsAuthenticated, navigate]);
-
-  const fetchTMDBToken = async () => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/authentication/token/new?api_key=${TMDB_API_KEY}`
-      );
-      const data = await response.json();
-      if (!data.success) throw new Error('TMDB 토큰 요청 실패');
-      return data.request_token;
-    } catch (error) {
-      toast.error('TMDB API 오류 발생');
-      return null;
-    }
-  };
+  }, [setIsAuthenticated, setUserEmail, setUserName, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -63,22 +50,20 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
     );
 
     if (foundUser) {
-      const token = await fetchTMDBToken();
-      if (token) {
-        setIsAuthenticated(true);
-        localStorage.setItem('email', email);
+      setIsAuthenticated(true);
+      localStorage.setItem('email', email);
+      localStorage.setItem('loginType', 'local'); // 일반 로그인 저장
 
-        if (rememberMe) {
-          localStorage.setItem('rememberedEmail', email);
-          localStorage.setItem('autoLogin', 'true');
-        } else {
-          localStorage.removeItem('rememberedEmail');
-          localStorage.setItem('autoLogin', 'false');
-        }
-
-        toast.success('로그인 성공!');
-        navigate('/');
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem('autoLogin', 'true');
+      } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.setItem('autoLogin', 'false');
       }
+
+      toast.success('로그인 성공!');
+      navigate('/');
     } else {
       setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
       toast.error('로그인 실패. 다시 시도해 주세요.');
@@ -89,12 +74,10 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
     if (!window.Kakao?.isInitialized()) {
       window.Kakao.init('56295e10d97fc48ea7feac8a52d48be0'); // JavaScript 키 입력
     }
-  
-    // 기존 세션 초기화
+
     window.Kakao.Auth.logout(() => {
       console.log('기존 세션 초기화 완료');
-  
-      // 새로운 로그인 시작
+
       window.Kakao.Auth.login({
         success: (authObj) => {
           window.Kakao.API.request({
@@ -103,16 +86,15 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
               const { id, kakao_account } = res;
               const kakaoEmail = kakao_account.email || `kakao_user_${id}@kakao.com`;
               const kakaoName = kakao_account.profile?.nickname || 'Unknown';
-              const kakaoProfileId = id;
-  
+
               localStorage.setItem('email', kakaoEmail);
               localStorage.setItem('name', kakaoName);
-              localStorage.setItem('profileId', kakaoProfileId);
-  
+              localStorage.setItem('loginType', 'kakao'); // 카카오 로그인 저장
+
               setIsAuthenticated(true);
               setUserEmail(kakaoEmail);
               setUserName(kakaoName);
-  
+
               toast.success('카카오 로그인 성공!');
               navigate('/');
             },
@@ -128,7 +110,7 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
         },
       });
     });
-  };  
+  };
 
   const toggleCard = () => {
     setIsLoginVisible(!isLoginVisible);
@@ -225,30 +207,15 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                 <button type="submit" disabled={!email || !password || !isValidEmail(email)}>
                   Login
                 </button>
-                {/* 카카오 로그인 이미지 버튼 */}
                 <button
                   type="button"
                   onClick={handleKakaoLogin}
                   className="kakao-login-button"
-                  style={{
-                    marginTop: '10px',
-                    padding: '10px',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    border: 'none',
-                  }}
                 >
-                  <img
-                    src="/kakao-login-button.png"  // public 폴더에 위치한 이미지 사용
-                    alt="카카오 로그인 버튼"
-                    style={{
-                      width: '100%',  // 버튼 크기 조정
-                      height: 'auto',
-                    }}
-                  />
+                  <img src="/kakao-login-button.png" alt="카카오 로그인 버튼" />
                 </button>
               </form>
-              <a href="javascript:void(0)" className="account-check" onClick={toggleCard}>
+              <a href="javascript:void(0)" onClick={toggleCard}>
                 Don't have an account? <b>Sign up</b>
               </a>
             </div>
@@ -261,7 +228,6 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                     id="register-email"
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
-                    placeholder="Email"
                   />
                   <label htmlFor="register-email">Email</label>
                 </div>
@@ -271,7 +237,6 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                     id="register-password"
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
-                    placeholder="Password"
                   />
                   <label htmlFor="register-password">Password</label>
                 </div>
@@ -281,7 +246,6 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                     id="confirm-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm Password"
                   />
                   <label htmlFor="confirm-password">Confirm Password</label>
                 </div>
@@ -297,7 +261,7 @@ const SignIn = ({ setIsAuthenticated, setUserEmail, setUserName }) => {
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
                 <button type="submit">Register</button>
               </form>
-              <a href="javascript:void(0)" className="account-check" onClick={toggleCard}>
+              <a href="javascript:void(0)" onClick={toggleCard}>
                 Already have an account? <b>Sign in</b>
               </a>
             </div>

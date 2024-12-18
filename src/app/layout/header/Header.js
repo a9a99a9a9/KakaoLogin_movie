@@ -85,31 +85,48 @@ const Header = ({ setIsAuthenticated }) => {
   };
 
   const handleLogout = () => {
-    if (window.Kakao?.isInitialized()) {
-      // 앱과 사용자 연결 해제
-      window.Kakao.API.request({
-        url: '/v1/user/unlink',
-        success: () => {
-          // localStorage와 상태 초기화
-          localStorage.removeItem('email');
-          localStorage.removeItem('name');
-          localStorage.removeItem('profileId'); // 프로필 ID도 삭제
-          setUserEmail(null);
-          setUserName(null);
-          setIsAuthenticated(false);
+    const loginType = localStorage.getItem('loginType'); // 로그인 타입 확인 (kakao 또는 local)
   
-          toast.success('로그아웃 성공!');
-          navigate('/signin');
-        },
-        fail: (error) => {
-          console.error('카카오 로그아웃 실패:', error);
-          toast.error('로그아웃 중 오류가 발생했습니다.');
-        },
-      });
+    if (loginType === 'kakao') {
+      // 카카오 로그아웃
+      if (window.Kakao?.isInitialized()) {
+        window.Kakao.API.request({
+          url: '/v1/user/unlink',
+          success: () => {
+            // 카카오 관련 localStorage 초기화
+            localStorage.removeItem('email');
+            localStorage.removeItem('name');
+            localStorage.removeItem('profileId');
+            localStorage.removeItem('loginType'); // 로그인 타입 초기화
+  
+            setUserEmail(null);
+            setUserName(null);
+            setIsAuthenticated(false);
+  
+            toast.success('카카오 로그아웃 성공!');
+            navigate('/signin');
+          },
+          fail: (error) => {
+            console.error('카카오 로그아웃 실패:', error);
+            toast.error('카카오 로그아웃 중 오류가 발생했습니다.');
+          },
+        });
+      }
     } else {
-      toast.error('카카오가 초기화되지 않았습니다.');
+      // 일반 로그아웃
+      localStorage.removeItem('email');
+      localStorage.removeItem('name');
+      localStorage.removeItem('loginType'); // 로그인 타입 초기화
+  
+      setUserEmail(null);
+      setUserName(null);
+      setIsAuthenticated(false);
+  
+      toast.success('로그아웃 성공!');
+      navigate('/signin');
     }
   };
+  
   
 
   const toggleMobileMenu = () => {
